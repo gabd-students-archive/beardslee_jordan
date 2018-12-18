@@ -19,12 +19,11 @@
 3. Hunting
 -------------------------------------------
 ### Cars Owned
-
-    |Make      | Model  | Year |
-    |------    |:-----: |-----:|
-    |Chevrolet | Camaro | 1997 |
-    |Ford      | F150   | 2004 |
-    |Saturn    | SL2    | 1994 |
+Make| Model | Year
+---- | :----: | ----: 
+Chevrolet | Camaro | 1997
+Ford | F-150 | 2004 
+Saturn | SL2 | 1994
 -------------------------------------------
 ### Favorite Quote
 
