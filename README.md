@@ -19,14 +19,15 @@
 3. Hunting
 -------------------------------------------
 ### Cars Owned
-    | Make | Model | Year |
-    | ---- | :---: | ---: |
-    | Chevrolet |Camaro | 1997 |
-    | Ford | F15 0| 2004 |
-    | Saturn | SL2 | 1994 |
+    Make | Model | Year |
+    ------|:-----:|-----:|
+    Chevrolet | Camaro | 1997 |
+    Ford | F150 | 2004 |
+    Saturn | SL2 | 1994 |
 -------------------------------------------
 ### Favorite Quote
->“In peace nothing so becomes a man as modest stillness and humility; but when the blast of war blows in our ears, then imitate the action of the tiger; stiffen the sinews, disguise fair nature with hard favored rage. . .”
+
+> In peace nothing so becomes a man as modest stillness and humility; but when the blast of war blows in our ears, then imitate the action of the tiger; stiffen the sinews, disguise fair nature with hard favored rage. . .
 – William Shakespeare (“Quote from King Henry V”)
 ---------------------------------------------------------------------
     
