@@ -73,10 +73,8 @@ colnames(star_wars_matrix) <- region
 rownames(star_wars_matrix) <- titles
 
 # Print out star_wars_matrix
-                             US non-US
-A New Hope              460.998  314.4
-The Empire Strikes Back 290.475  247.9
-Return of the Jedi      309.306  165.8
+star_wars_matrix
+
 #
 ```
 
@@ -100,10 +98,7 @@ star_wars_matrix <- matrix(box_office, nrow = 3, byrow = TRUE,
 worldwide_vector <- c(rowSums(star_wars_matrix))
 
 # Print out worldwide_vector
-  A New Hope The Empire Strikes Back 
-                775.398                 538.375 
-     Return of the Jedi 
-                475.106 
+worldwide_vector
 
 #
 ```
@@ -168,8 +163,7 @@ all_wars_matrix
 colSums(all_wars_matrix)
 
 # Print out total_revenue_vector
-      US   non-US 
-2226.279 2087.800 
+total_revenue_vector
 
 #
 ```
@@ -221,15 +215,8 @@ all_wars_matrix
 visitors <- c(all_wars_matrix / 5)
 
 # Print the estimate to the console
-                             US non-US
-A New Hope              460.998  314.4
-The Empire Strikes Back 290.475  247.9
-Return of the Jedi      309.306  165.8
-The Phantom Menace      474.500  552.5
-Attack of the Clones    310.700  338.7
-Revenge of the Sith     380.300  468.5
- [1]  92.1996  58.0950  61.8612  94.9000  62.1400  76.0600
- [7]  62.8800  49.5800  33.1600 110.5000  67.7400  93.7000
+visitors
+
 
 #
 ```
