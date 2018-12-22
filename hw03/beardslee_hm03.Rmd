@@ -1,0 +1,20 @@
+---
+title: "Homework 03"
+author: "Jordan Beardslee"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  html_document:
+    df_print: paged
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r}
+plot(cars)
+```
+
+
+```{r}
+library(tidyverse)
+```
+
