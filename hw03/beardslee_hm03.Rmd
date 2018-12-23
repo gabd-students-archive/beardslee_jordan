@@ -16,6 +16,8 @@ plot(cars)
 
 ```{r}
 library(tidyverse)
+library(knitr)
+library(xtable)
 ```
 
 ```{r}
@@ -41,3 +43,63 @@ ansc <-
 ansc
 ```
 
+```{r}
+ansc %>%
+  group_by(dataset) %>%
+  summarize(
+    mean_x = mean(x),
+    stdev_x = sd(x), 
+    mean_y = mean(y),
+    stdev_y = sd(y)
+  ) 
+```
+
+```{r}
+ansc %>% ggplot(aes(x, y, color = dataset)) + 
+  geom_point() +
+  facet_wrap(~dataset, ncol = 2)
+```
+
+```{r}
+head(iris)
+```
+
+```{r}
+kable(head(iris), 
+      align= c("l", "c", "r", "c", "l"),
+      col.names = c("Sepal Length", "Sepal Width", "Sepal Length", "Sepal Width", "Species"))
+```
+
+```{r}
+head(airquality)
+```
+
+```{r}
+kable(head(airquality),
+      align = c("r", "r", "c", "c", "l", "l"),
+      col.names = c("Ozone(ppb)", "Solar R (lang)", "Wind (mph)", "Temp (F)", "Month", "Day"))
+```
+
+```{r}
+chicks_lm <- lm(weight ~ feed, data = chickwts)
+
+summary(chicks_lm)
+```
+
+```{r}
+kable (chickwts)
+```
+The data gave me all of the weight of feeds grouped by type. It did not put everything in order of weight though.
+
+```{r}
+xtable(chicks_lm) %>% kable()
+```
+
+```{r}
+treess_lm <- lm(Girth ~ Height, data = trees)
+xtable(trees_lm) %>% kable()
+```
+
+$$\chi^2_c$ = \sum \frac{O_i - E_i}^2{E_i}.$$
+
+[^1]: This is my footnote
