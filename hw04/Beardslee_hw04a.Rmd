@@ -446,7 +446,7 @@ The default positioin adjustment for geom_boxplot() is size.
 ggplot(data = mpg, mapping = aes(x = class, y = hwy, color = drv)) + 
   geom_boxplot(position = "dodge")
 ```
-
+This shows, with a margine of error, where the different classes of cars land in comparison to the hwy variable.
 
 ### Section 3.9: Coordinate systems
 ```{r}
