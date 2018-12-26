@@ -76,3 +76,23 @@ ggplot(data = msleep, mapping = aes(x = order, y = sleep_total)) +
 ```
 
 ###Plot <8.>
+```{r}
+ggplot(data = msleep, mapping = aes(x = conservation, y = awake)) + 
+  geom_boxplot() + geom_point() + geom_jitter() + coord_flip()+
+  labs(x = "Conservation", y = "Awake")
+```
+
+###Plots <9.> and <10.>
+
+```{r}
+ggplot(data = msleep) + 
+  geom_point(mapping = aes(x = sleep_total, y = brainwt, color = sleep_cycle)) + facet_wrap(~ sleep_rem, nrow = 2)
+```
+By the looks of this graph brain weight does not have much to do with sleep total. Most of the data points are clustered around 10 hours, and vary in both weight and sleep cycle differences.
+
+```{r}
+ggplot(data = msleep) + 
+  geom_point(mapping = aes(x = sleep_total, y = bodywt, color = sleep_rem)) + facet_wrap(~ sleep_cycle, nrow = 2)
+```
+Increased body weight appears to have some affect on total sleep time with higher weights spending less total time asleep and in rem sleep. as weights decrease total time asleep and in rem apprears to increase. 
+
