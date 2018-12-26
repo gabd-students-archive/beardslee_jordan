@@ -1,0 +1,78 @@
+---
+title: "HW04 Part 2: Complete Chapter 3"
+author: "Jordan Beardslee"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r}
+library("tidyverse")
+```
+
+### Plot <1.>
+```{r}
+?trees
+```
+
+```{r}
+ggplot(data = trees) +
+  geom_point(mapping = aes(x = Height, y = Girth))
+```
+
+###Plot <2.>
+```{r}
+?year
+```
+
+```{r}
+year <- c(1821:1934)
+```
+
+```{r}
+class(lynx)
+as.vector(year)
+```
+```{r}
+pelts <- c(as.vector(year))
+```
+```{r}
+lynx_pelts <- data.frame(year, pelts)
+```
+```{r}
+ggplot(data = lynx_pelts, mapping = aes(x = year, y = pelts, color = "maroon")) + geom_line() +
+  geom_smooth(se = FALSE)
+```
+
+###Plot <3.>
+```{r}
+as.vector(iris)
+```
+
+
+```{r}
+ggplot(data = iris) +
+  geom_point(mapping = aes(x = Petal.Length, y = Petal.Width, color = Species, shape = Species, size = 2)) +
+  labs(x = "Petal Length", y = "Petal Width")
+```
+
+###Plots <4.> <5.>
+```{r}
+?geom_violin
+```
+
+```{r}
+ggplot(data = msleep) +
+  geom_violin(fill = "grey70", mapping = aes(x = vore, y = sleep_rem))
+```
+This plot shows where more of the data is clustered by the wider portion of the violin shapes. The wider the poriton, the more data is clustered in that area.
+
+###Plot <7.>
+```{r}
+ggplot(data = msleep, mapping = aes(x = order, y = sleep_total)) + 
+  geom_boxplot() + coord_flip()
+  
+```
+
+###Plot <8.>
