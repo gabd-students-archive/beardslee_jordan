@@ -81,11 +81,12 @@ This shows only the columns that will fit on the screen and only the first ten r
 nycflights13::flights %>% 
   print(n = 10, width = Inf)
 ```
+This condenses the flights into a table that is not only easy to read but fits on the screen.
 ```{r}
 nycflights13::flights %>% 
   View()
 ```
-
+Viewing the flight table shows that it is very large, using the print function the table becomes more manageable.
 ```{r}
 df <- tibble(
   x = runif(5),
@@ -294,41 +295,118 @@ Time to [get small.](https://www.youtube.com/watch?v=GOrdzCHnpw4)
 ### 5.1: Introduction
 
 Load the necessary libraries. As usual, type the examples into and run the code chunks.
+```{r}
+library(nycflights13)
+library(tidyverse)
+```
+
+```{r}
+flights
+```
+This is a very condensed version of the actual table, using only the first few rows of data, and the first few columns.
 
 ### 5.2: Filter rows with `filter()`
 
 Study Figure 5.1 carefully. Once you learn the `&`, `|`, and `!` logic, you will find them to be very powerful tools.
 
+```{r}
+filter(flights, month == 1, day == 1)
+```
+This gave me only the flights on the first day of the first month.
+
+```{r}
+jan1 <- filter(flights, month ==1, day == 1)
+```
+
+```{r}
+(dec25 <- filter(flights, month == 12, day == 25))
+```
+This gives me only the flights on the 25th of December, filtering out all the other days.
+
+```{r}
+near(sqrt(2) ^ 2,  2)
+#> [1] TRUE
+near(1 / 49 * 49, 1)
+#> [1] TRUE
+```
+This is simply giving me the closest number that the computer can in order to keep from using infinite numbers.
+
+```{r}
+filter(flights, month == 11 | month == 12)
+```
+This code uses the "|" to decide that the flights between November and December will be included in the data.
+
+```{r}
+nov_dec <- filter(flights, month %in% c(11, 12))
+```
+
+```{r}
+filter(flights, !(arr_delay > 120 | dep_delay > 120))
+filter(flights, arr_delay <= 120, dep_delay <= 120)
+```
+This line of code filtered out all the flights that were delayed, leaving only those that arrived on time to be included in the data. 
 
 #### 5.2 Questions
 
 **1.1:** Find all flights with a delay of 2 hours or more.
+```{r}
+filter(flights, (arr_delay > 120 | dep_delay > 120))
+```
 
 
 **1.2:** Flew to Houston (IAH or HOU)
+```{r}
+filter(flights, dest == 'IAH' | dest == 'HOU')
+```
 
 
 **1.3:** Were operated by United (UA), American (AA), or Delta (DL).
+```{r}
+filter(flights, carrier == 'UA' | carrier == 'AA' | carrier == 'DL')
+```
 
 
 **1.4:** Departed in summer (July, August, and September).
+```{r}
+filter(flights, month >= 7 & month <= 9)
+```
 
 
 **1.5:** Arrived more than two hours late, but didn’t leave late.
 
+```{r}
+filter(flights, arr_delay > 120, dep_delay <= 0)
+```
+
+
 **1.6:** Were delayed by at least an hour, but made up over 30 minutes in flight. This is a tricky one. Do your best.
 
+```{r}
+filter(flights, dep_delay >= 60, dep_delay-arr_delay > 30)
+```
 
 **1.7:** Departed between midnight and 6am (inclusive)
+```{r}
+filter(flights, dep_time <=600 | dep_time == 2400)
+```
 
 
 **2:** Another useful dplyr filtering helper is `between()`. What does it do? Can you use it to simplify the code needed to answer the previous challenges?
+```{r}
+filter(flights, between(month, 7, 9))
+filter(flights, !between(dep_time, 601, 2359))
+```
 
 
 **3:** How many flights have a missing dep_time? What other variables are missing? What might these rows represent?
-
+```{r}
+summary(flights)
+```
+8255 have missing dep times, 8255 have missing dep_delay, 8713 have missing arr_time, 9430 have missing air_time
 
 **4:** Why is `NA ^ 0` not missing? Why is `NA | TRUE` not missing? Why is `FALSE & NA` not missing? Can you figure out the general rule? (`NA * 0` is a tricky counterexample!)
+
+NA ^ 0 is equal to 1. NA | TRUE means that if either term is true, the whole set is counted as true. FALSE & NA is not missing because one of the answers in the expression is still false. The general rule seems to be if at least part of the set is correct, it is counted as a correct piece of code. 
 
 **Note:** For some context, see [this thread](https://blog.revolutionanalytics.com/2016/07/understanding-na-in-r.html)
 
@@ -340,13 +418,29 @@ Study Figure 5.1 carefully. Once you learn the `&`, `|`, and `!` logic, you will
 
 **1:** How could you use `arrange()` to sort all missing values to the start? (Hint: use is.na()). **Note:** This one should still have the earliest departure dates after the `NA`s. *Hint:* What does `desc()` do?
 
+```{r}
+df <- tibble(x = c(5, 2, NA))
+arrange(df, desc(is.na(x)))
+arrange(df, -(is.na(x)))
+```
+
 
 **2:** Sort flights to find the most delayed flights. Find the flights that left earliest. 
 
 This question is asking for the flights that were most delayed (left latest after scheduled departure time) and least delayed (left ahead of scheduled time).
 
+```{r}
+arrange(flights, desc(dep_delay))
+arrange(flights, dep_delay)
+
+```
+
+
 
 **3:** Sort flights to find the fastest flights. Interpret fastest to mean shortest time in the air.
+```{r}
+flights %>% mutate(travel_time = ifelse((arr_time - dep_time < 0), 2400+(arr_time - dep_time), arr_time - dep_time)) %>% arrange(travel_time) %>% select(arr_time, dep_time, travel_time)
+```
 
 
 *Optional challenge:* fastest flight could refer to fastest air speed. Speed is measured in miles per hour but time is minutes. Arrange the data by fastest air speed.
@@ -354,27 +448,44 @@ This question is asking for the flights that were most delayed (left latest afte
 
 **4:** Which flights travelled the longest? Which travelled the shortest?
 
+```{r}
+arrange(flights, desc(distance)) %>% select(1:5, distance)
+arrange(flights, distance) %>% select(1:5, distance)
+```
 
 ### 5.4 Select columns with `select()`
 
 #### 5.4 Questions
 
 **1:** Brainstorm as many ways as possible to select `dep_time`, `dep_delay`, `arr_time`, and `arr_delay` from flights. Find at least three ways.
+```{r}
+select(flights, dep_time,  dep_delay, arr_time, arr_delay)
+select(flights, c(dep_time,  dep_delay, arr_time, arr_delay))
+flights %>% select(dep_time,  dep_delay, arr_time, arr_delay)
+```
 
 
 **2:** What happens if you include the name of a variable multiple times in a `select()` call?
 
+Nothing since its the same variable.
 
 
 **3:** What does the `one_of()` function do? Why might it be helpful in conjunction with this vector?
+It brings back all the variables you used. This would be helpful so you know exactly which variables you have used in the vector.
 
 `vars <- c("year", "month", "day", "dep_delay", "arr_delay")`
 
+flights %>% select(one_of(vars))
 
 
 **4:** Does the result of running the following code surprise you? How do the select helpers deal with case by default? How can you change that default?
 
 `select(flights, contains("TIME"))`
 
+```{r}
+select(flights, contains("TIME"))
 
+
+```
+The results aren't that surprising since everything in the table contains the word time, the helpers just pick everything that has the word time in it. 
 
