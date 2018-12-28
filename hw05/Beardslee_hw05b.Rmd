@@ -1,0 +1,45 @@
+---
+title: "HW05 Part 2"
+author: "Jordan Beardslee"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+```{r}
+library(tidyverse)
+
+file_path <- "~/bi485/beardslee_jordan/data/"
+
+```
+
+
+###Limpets
+```{r}
+limpet <- read_csv(file.path(file_path, "limpets.csv"), col_types = cols("n", "c", "c"))
+limpet
+```
+```{r}
+sites <- c("PBL", "KNRM", "VBG", "WP", "PF", "DP", "SIO", "CTZ1", "CTZ2", "CNM")
+limpet_ordered <- factor(sites, levels = c("PBL", "KNRM", "VBG", "WP", "PF", "DP", "SIO", "CTZ1", "CTZ2", "CNM"), ordered = TRUE)
+limpet_ordered
+```
+```{r}
+ggplot(data = limpet, mapping = aes(x = sites, y = length, color = Protected)) + geom_boxplot()
+```
+
+
+
+
+###Roseate Terns
+```{r}
+roseate_terns
+```
+
+```{r}
+roseate_terns %>% filter(complete.cases(.))
+```
+```{r}
+ggplot(data = roseate_terns) + geom_smooth(mapping = aes(x = character, y = rownames))
+```
+
