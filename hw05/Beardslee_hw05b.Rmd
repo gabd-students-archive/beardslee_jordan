@@ -40,6 +40,14 @@ roseate_terns
 roseate_terns %>% filter(complete.cases(.))
 ```
 ```{r}
-ggplot(data = roseate_terns) + geom_smooth(mapping = aes(x = character, y = rownames))
+
+```
+
+###Darters
+```{r}
+darters
+```
+```{r}
+
 ```
 
