@@ -8,8 +8,7 @@ editor_options:
 ---
 ```{r}
 library(tidyverse)
-
-file_path <- "~/bi485/beardslee_jordan/data/"
+"C:/Users/User/Documents/bi485/beardslee_jordan/data/limpets.csv"
 
 ```
 
@@ -20,34 +19,121 @@ limpet <- read_csv(file.path(file_path, "limpets.csv"), col_types = cols("n", "c
 limpet
 ```
 ```{r}
+read_csv("limpets.csv")
+```
+
+
+```{r}
 sites <- c("PBL", "KNRM", "VBG", "WP", "PF", "DP", "SIO", "CTZ1", "CTZ2", "CNM")
 limpet_ordered <- factor(sites, levels = c("PBL", "KNRM", "VBG", "WP", "PF", "DP", "SIO", "CTZ1", "CTZ2", "CNM"), ordered = TRUE)
 limpet_ordered
 ```
 ```{r}
-ggplot(data = limpet, mapping = aes(x = sites, y = length, color = Protected)) + geom_boxplot()
+limp <- factor(limpets, levels = c("PBL", "KNRM", "VBG", "WP", "PF", "DP", "SIO", "CTZ1", "CTZ2", "CNM"), ordered = TRUE)
+limp
 ```
-
+```{r}
+ggplot(data = limpets) + 
+  geom_boxplot(mapping = aes(x = Site, y = Length, color = Protected)) +
+  xlab("Site") +
+  ylab("Length (mm)")
+```
+DP and WP have outliers. The protected areas appear to have larger limpets, though sites like CTZ1 and CTZ2 are close to VBG and they are not protected. 
 
 
 
 ###Roseate Terns
 ```{r}
-roseate_terns
+"C:/Users/User/Documents/bi485/beardslee_jordan/data/roseate_terns.txt"
 ```
 
 ```{r}
-roseate_terns %>% filter(complete.cases(.))
+roseate_terns <- read_tsv("roseate_terns.txt")
 ```
-```{r}
 
+```{r}
+roseate_tidy <- roseate_terns %>% 
+  gather(key = "pop_name", value = "pop_size", AR:JC)
+roseate_tidy
 ```
+
+```{r}
+filter(roseate_tidy, !is.na(pop_size))
+```
+
+```{r}
+ggplot(data = roseate_tidy) + 
+  geom_line(mapping = aes(x = year, y = pop_size, color = pop_name)) +
+  xlab("Year") +
+  ylab("Population Size")
+```
+Population AR increased dramatically in size between 1992 and 2016. Populations JR and BR decreased between 1992 and 1997. Some of the lines have breaks in them because there are sections of data that are unavailable, this means gaps in the data. 
 
 ###Darters
 ```{r}
+"C:/Users/User/Documents/bi485/beardslee_jordan/data/darters.txt"
+```
+```{r}
+darters <- read_csv("darters.txt")
+
 darters
 ```
 ```{r}
+darters
+factor(riffle, "1", "2")
+```
 
+
+
+###Blacklip Abalone
+
+###Chunk <1.>
+```{r}
+"C:/Users/User/Documents/bi485/beardslee_jordan/data/abalone.csv"
+
+abalone
+```
+
+
+###Chunk <2.>
+```{r}
+abalone <- read_csv("abalone.csv") 
+
+ggplot(data = abalone) + 
+  geom_boxplot(mapping = aes(x = Type, y = Height))
+
+```
+The oldest individuals do not seem to be the largest. 
+
+###Chunk <3.>
+```{r}
+ggplot(data = abalone) +
+  geom_point(mapping = aes(x = Rings, y = Height))
+```
+It would appear that the females are the largest and that both males and females are larger than the immatures. 
+
+###Chunk <4.>
+```{r}
+ggplot(data = abalone) +
+  geom_point(mapping = aes(x = Rings, y = Height))
+filter(abalone, Height < 0.3)
+
+abalone <- factor(abalone, levels = c("I", "F", "M",), ordered = TRUE)
+```
+The largest abalone tend to be in the ten to tweny ring range, and failing to rech larger sizes with age.
+
+```{r}
+print(abalone) 
+filter(abalone, Height == 0)
+
+abalone[abalone == 0] <- NA
+```
+###Chunk <5>
+```{r}
+ggplot(data = abalone, mapping = aes(x = LongestShell, y = WholeWeight)) + 
+  geom_point(mapping = aes(color = Type))
+
+ggplot(data = abalone, mapping = aes(x = Diameter, y = ShellWeight)) + 
+  geom_point(mapping = aes(color = Type))
 ```
 
