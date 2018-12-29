@@ -72,17 +72,26 @@ Population AR increased dramatically in size between 1992 and 2016. Populations 
 ###Darters
 ```{r}
 "C:/Users/User/Documents/bi485/beardslee_jordan/data/darters.txt"
-```
-```{r}
-darters <- read_csv("darters.txt")
 
-darters
 ```
 ```{r}
 darters
-factor(riffle, "1", "2")
 ```
 
+```{r}
+d_riffle <- daters <- factor(darters, levels = c("1", "2"), ordered = FALSE)
+```
+
+```{r}
+darters <- darters <- factor(darters$majtype, levels = c("s", "fg", "sg", "lg", "c"), ordered = TRUE)
+```
+
+```{r}
+darters <- filter(!species, c("zonale", "tetrazonum"))
+```
+```{r}
+darters
+```
 
 
 ###Blacklip Abalone
