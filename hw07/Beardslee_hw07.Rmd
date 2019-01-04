@@ -39,6 +39,7 @@ plot_box <- sparrows %>%
   labs(x = NULL,
        y = "Wing length (mm)")
 ```
+
 ```{r}
 plot_cleveland <- sparrows %>%
   ggplot(aes(x = wingcrd,
@@ -126,7 +127,7 @@ p_head
 ```{r}
 p_culmen + p_nalospi + p_wt + p_wingcrd + p_tarsus + p_head + plot_layout(ncol = 3)
 ```
-Head, Nalospi, and wingcrd appear to have outlier data.
+Question: Head, Nalospi, and tarsus appear to have outlier data.
 
 ####Figure 5: distribution
 ```{r}
@@ -186,3 +187,285 @@ sparrows %>%
 ```
 
 ####Part 2: Habitat parameters for Aegla crabs
+```{r}
+file_path <- "~/bi485/beardslee_jordan/data/aegla_crabs.csv"
+
+crabs <- aegla_crabs
+crabs <- subset(crabs, select = -c(Site,AT,WT,Shrimp,Aeglam,AeglaFe,AeglaFo))
+crabs <- drop_na(crabs)
+crabs <- crabs %>%
+  mutate(row_order = 1:nrow(.))
+View(crabs)
+```
+
+####Explore the data
+```{r}
+p_width <- crabs %>% 
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = Width)) +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+```
+
+```{r}
+p_Depth <- crabs %>% 
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = Depth)) +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+```
+
+```{r}
+p_flow <- crabs %>% 
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = Flow)) +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+```
+
+```{r}
+p_pH <- crabs %>% 
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = pH)) +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+```
+
+```{r}
+p_TDS <- crabs %>% 
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = TDS)) +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+```
+
+```{r}
+p_cond <- crabs %>% 
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = Cond)) +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+```
+
+```{r}
+p_N <- crabs %>% 
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = N)) +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+```
+
+
+```{r}
+p_Ni <- crabs %>% 
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = Ni)) +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+```
+
+```{r}
+p_Nt <- crabs %>% 
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = Nt)) +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+```
+
+```{r}
+p_phos <- crabs %>% 
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = Phos)) +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+```
+
+```{r}
+p_Mg <- crabs %>% 
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = Mg)) +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+```
+
+```{r}
+p_Ca <- crabs %>% 
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = Ca)) +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+```
+
+```{r}
+p_Crab <- crabs %>% 
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = Crab)) +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+```
+
+```{r}
+p_width + p_Depth + p_flow + p_pH + p_TDS + p_cond + p_N + p_Ni + p_Nt + p_phos + p_Mg + p_Ca + p_Crab + plot_layout(ncol = 6)
+```
+Question 1: Crab, Depth, and Ph have the more obvious outliers. These three have data points that are most obviously broken away from the main group. Crabs has two that don't remain within reasonable devation from the main data, Depth has one point well away from the other, ver closely packed values, and PH has a point that is nowhere near high enough to be normal.
+
+```{r}
+Crab_plot <- crabs %>% 
+  ggplot(aes(x = row_order, 
+             y = Crab)) +
+  geom_boxplot(width = 0.25) 
+Crab_plot
+```
+
+```{r}
+ph_plot <- crabs %>% 
+  ggplot(aes(x = row_order, 
+             y = pH)) +
+  geom_boxplot(width = 0.25) 
+ph_plot
+```
+
+```{r}
+depth_plot <- crabs %>% 
+  ggplot(aes(x = row_order, 
+             y = Depth)) +
+  geom_boxplot(width = 0.25) 
+depth_plot
+```
+By the looks of it, Crabs has the most outliers since there are several points completely outside the error bars.
+
+
+```{r}
+plot_width <- crabs %>% 
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = Width)) +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+```
+
+```{r}
+plot_depth <- crabs %>% 
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = Depth)) +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+```
+
+```{r}
+plot_flow <- crabs %>% 
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = Flow)) +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+```
+
+```{r}
+plot_crabs <- crabs %>% 
+  ggplot(aes(y = row_order)) +
+  geom_point(aes(x = Crab)) +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+```
+
+```{r}
+plot_width + plot_depth + plot_flow + plot_crab + plot_layout(ncol = 2)
+```
+
+####Histograms
+
+```{r}
+Crabsh1 <- crabs %>%
+  ggplot() +
+  geom_histogram(aes(x = Mg),
+                 binwidth = 1,
+                 boundary = 0,
+                 closed = "right",
+                 color = "black") +
+  scale_x_continuous(breaks = seq(2, 82, by = 4))
+Crabsh1
+```
+
+```{r}
+Crabsh2 <- crabs %>%
+  ggplot() +
+  geom_histogram(aes(x = TDS),
+                 binwidth = 3,
+                 boundary = 0,
+                 closed = "right",
+                 color = "black") +
+  scale_x_continuous(breaks = seq(2, 82, by = 4))
+Crabsh2
+```
+
+```{r}
+Crabsh3 <- crabs %>%
+  ggplot() +
+  geom_histogram(aes(x = Cond),
+                 binwidth = 3,
+                 boundary = 0,
+                 closed = "right",
+                 color = "black") +
+  scale_x_continuous(breaks = seq(2, 82, by = 4))
+Crabsh3
+```
+####Density Plots
+
+```{r}
+Crabsd1 <- crabs %>% 
+  ggplot() +
+  geom_density(aes(x = Mg)) +
+  scale_x_continuous(breaks = seq(0,40, by = 5))
+Crabsd1
+```
+
+```{r}
+Crabsd2 <- crabs %>% 
+  ggplot() +
+  geom_density(aes(x = TDS)) +
+  scale_x_continuous(breaks = seq(0,40, by = 5))
+Crabsd2
+```
+
+```{r}
+Crabsd3 <- crabs %>% 
+  ggplot() +
+  geom_density(aes(x = Cond)) +
+  scale_x_continuous(breaks = seq(0,40, by = 5))
+Crabsd3
+```
+
+####Patchwork
+```{r}
+histograms <- Crabsh1 + Crabsh2 + Crabsh3 + plot_layout(nrow = 3)
+
+histograms
+```
+
+```{r}
+density <- Crabsd1 + Crabsd2 + Crabsd3 + plot_layout(nrow = 3)
+
+density
+```
+
+####Explore Relationship Between Variables
+```{r}
+crabs %>% ggpairs(collumns = 1|14)
+```
+
