@@ -1,0 +1,221 @@
+---
+title: "HW 06 Part 1: Complete the sections"
+author: "Jordan Beardslee"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+***
+####Part 2 Darters
+
+```{r}
+library(tidyverse)
+
+library(knitr)
+
+library(smatr)
+```
+
+####Import and Wrangle
+```{r}
+file_path <- "~/bi485/beardslee_jordan/data/darter.txt"
+widths <- fwf_widths(c(3, 11, 1, 1, 1, 3, 4, 4, 4, 3, 3, 2, 2))
+darter <- read_fwf("darters.txt", comment = "#", col_positions = widths)
+col_names <- c("id", "species", "riffle", "age", "sex", "length", "depth", "velocity", "temperature", "majsub", "minsub", "majtype", "mintype")
+colnames(darter) <- col_names
+darter <- filter(darter, species == "spectiabile" | species == "caeruleum" | species == "blennioides")
+```
+```{r}
+mutate(darter,
+       total_substrate = majsub + minsub)
+```
+```{r}
+mutate(darter,
+       riffle = ifelse(riffle == 1,
+                       "riffle_1",
+                       "riffle_2"))
+```
+```{r}
+mutate(darter,length = length * 10)
+```
+```{r}
+mutate(darter, sex = ifelse(sex == "f", "Female", "Male"))
+```
+####Summarise data
+
+```{r}
+darter <- group_by(darter, species)
+darters_summary <- darter %>%
+  summarise(length <- mean(length, na.rm = TRUE),
+                          depth = mean(depth, na.rm = TRUE),
+                                       velocity = mean(velocity, na.rm= TRUE))
+
+darters_summary
+```
+####Plot<1.>
+```{r}
+ggplot(data = darter, mapping = aes(x = species, y = length)) +
+      geom_point(data = darter, mapping = aes(x = species, y = length), shape = 10) +
+      coord_flip() +
+      facet_wrap(~ riffle, nrow = 2) +
+      xlab("species") +
+      ylab("Length (mm)")
+
+
+```
+Riffle 2 means seem lower than riffle 1, caeruleum seems about even on both tables, while blennioides seems to be slightly higher in riffle 2.
+####Plot<2.>
+```{r}
+ggplot(data = darter, mapping = aes(x = species, y = length)) +
+  stat_summary(
+    fun.ymin = min,
+    fun.ymax = max,
+    fun.y = median,
+    geom = "point",
+    size = 2.2) +
+  stat_summary(
+    fun.y = mean,
+    size = 3,
+    color = "maroon"
+  ) +
+      geom_point(data = darter, fill = "grey70", mapping = aes(x = species, y = length)) +
+      coord_flip() +
+      facet_wrap(~ riffle, nrow = 2) +
+      xlab("species") +
+      ylab("Length (mm)")
+```
+
+####Stress and corticosterones in birds
+```{r}
+?locale
+file_path <- "~/bi485/beardslee_jordan/data/darter.txt"
+
+feathers <- read_csv("feathers.csv")
+
+locale(decimal_mark = ".", grouping_mark = ",")
+
+feathers
+```
+Data appears to be tidy, each variable is in a column and capture dates are aligned in rows. 
+
+```{r}
+names(feathers) <- c("capture_date", "day", "site", "urban_score", "cortF", "cortB", "sex", "smi", "tarsus", "mass", "basal_cort", "stress_cort")
+
+feathers
+
+```
+```{r}
+mean_tarsus <- summarise(feathers, mean_tarsus = mean(tarsus, na.rm = TRUE))
+```
+```{r}
+mean_tarsus
+```
+```{r}
+feathers
+```
+
+```{r}
+feathers <- feathers %>%
+  mutate(log_mass = log(mass),
+         log_tarsus= log(tarsus))
+```
+
+```{r}
+log_mass
+```
+```{r}
+log_tarsus
+```
+
+```{r}
+major_axis <- sma(log_mass ~ log_tarsus, data = feathers)
+
+```
+```{r}
+summary(major_axis)
+
+```
+```{r}
+coef(major_axis)
+
+b <- coef(major_axis)
+```
+
+```{r}
+new_smi <- (feathers$mass * ((mean_tarsus/feathers$tarsus)^b))
+
+
+```
+The values are basically identical in both elevation and slope.
+
+```{r}
+group_by(feathers, site)
+```
+
+```{r}
+mean_basal_cort <- mean(feathers$basal_cort)
+
+mean_stress_cort <- mean(feathers$stress_cort)
+
+sd_basal_cort <- sd(feathers$basal_cort, na.rm = TRUE)
+
+sd_stress_cort <- sd(feathers$stress_cort, na.rm = TRUE)
+
+se_basal_cort <- sd_basal_cort/(sqrt(43))
+
+se_stress_cort <- sd_stress_cort/(sqrt(43))
+
+se_basal_cort
+
+se_stress_cort
+```
+
+
+```{r}
+new_smi
+```
+
+
+
+```{r}
+feathers
+```
+
+
+####Plot<1.>
+```{r}
+ggplot(data = feathers, mapping = aes(x = site, y = "new_smi")) + 
+  geom_boxplot()
+```
+
+
+####Plot<2.>
+
+```{r}
+basal_min <- mean_basal_cort - sd_basal_cort
+
+basal_max <- mean_basal_cort + sd_basal_cort
+```
+
+
+```{r}
+ggplot(data = feathers, mapping = aes(x = site, y = basal_cort)) + 
+  geom_point() +
+  geom_errorbar(ymin = basal_min, ymax = basal_max)
+```
+####Plot<3.>
+```{r}
+max_stress <- mean_stress_cort + sd_stress_cort
+
+min_stress <- mean_stress_cort - sd_stress_cort
+```
+
+
+```{r}
+ggplot(data = feathers, mapping = aes(x = stress_cort, y = site)) + 
+  geom_point() +
+  geom_linerange(ymin = min_stress, ymax = max_stress)
+```
+
