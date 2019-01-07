@@ -177,7 +177,7 @@ flights_dt %>%
 
 ####Part 1
 ```{r}
-birth_date <- "March 11, 1992"
+birth_date <- "11 March 1992"
 
 # Elizabeth Garret Anderson was the first female physician
 anderson <- "9 June 1836"
@@ -209,8 +209,258 @@ mcclintock <- "16061902"
 mlk_birth <- "1/15/29"
 mlk_dream <- "1963 August 08"
 ```
-
+#1. Convert to POSIXct format using lubridate functions.
 ```{r}
+beardslee <- dmy(birth_date)
+anderson <- dmy(anderson)
+anning <- ymd(anning)
+ball <- mdy(ball)
+earle <- mdy(earle)
+franklin <- dmy(franklin)
+lederberg <- mdy(lederberg)
+mcclintock <- dmy(mcclintock)
+mlk_birth <- mdy(mlk_birth)
+mlk_dream <- ymd(mlk_dream)
+mlk_birth <- update(mlk_birth, year = 1929)
+
+beardslee_dttm <- as_datetime(beardslee)
+anderson_dttm <- as_datetime(anderson)
+anning_dttm <- as_datetime(anning)
+ball_dttm <- as_datetime(ball)
+earle_dttm <- as_datetime(earle)
+franklin_dttm <- as_datetime(franklin)
+lederberg_dttm <- as_datetime(lederberg)
+mcclintock_dttm <- as_datetime(mcclintock)
+mlk_birth_dttm <- as_datetime(mlk_birth)
+mlk_dream_dttm <- as_datetime(mlk_dream)
+
+beardslee_dttm
+anderson_dttm
+anning_dttm
+ball_dttm
+earle_dttm
+franklin_dttm
+lederberg_dttm
+mcclintock_dttm
+mlk_birth_dttm
+mlk_dream_dttm
+```
+#2 Check the dates to make sure they are correct.  
+Dates were correct but mlk_birth needed updating to fix year in order to show up correctly. 
+#3 What day of the week was I born on?
+```{r}
+wday(beardslee, label = TRUE, abbr = FALSE)
+```
+I was born on a Wednesday.
+
+#4 What day of the week will my birthday be this year?
+```{r}
+what_year <- year(today())
+update(beardslee, year = what_year)
+wday(beardslee, label = TRUE, abbr = FALSE)
+```
+Looks like it falls on another Wednesday.
+
+#5 What day of the week will my birthday fall on in 2525?
+```{r}
+beardslee %>%
+  update(year = 2525) %>%
+  wday(label = TRUE, abbr = FALSE)
+```
+My birthday will be on a Sunday.
+
+#How many days between the birth of Anderson and Ball
+```{r}
+anderson - ball
+```
+-20499 days between Anderson and Ball.
+
+#7 Duration between MLK birth and MLK dream
+```{r}
+Between <- mlk_dream - mlk_birth
+Between <- as.duration(Between)
+Between
+```
+34.56 years approximately. 
+
+#Enter the eight birthdates into vectors
+```{r}
+birth_vector <- c(beardslee_dttm, anderson_dttm, anning_dttm, ball_dttm, earle_dttm, franklin_dttm, lederberg_dttm, mcclintock_dttm, mlk_birth_dttm)
+names(birth_vector) <- c("Beardslee", "Anderson", "Anning", "Ball", "Earle", "Franklin", "Lederberg", "McClintock", "King")
+```
+
+#Which dates were leap years?
+```{r}
+leapyears <- leap_year(birth_vector)
+leapyears
+year(birth_vector[leapyears])
+```
+There were three leap years in the data with Franklin (1920), Anderson (1836), and Ball(1892) being born on leap years. There were 4 all together since my own birthday (1992) fell on a leap year.
+
+#Subtract each birthdate in the vector from your own to calculate the number of days that have passed. 
+```{r}
+days_passed_1 <- time_length(birth_vector - beardslee_dttm, "day")
+sort(days_passed_1, decreasing = FALSE)
 
 ```
+
+#Part 2
+```{r}
+library(readr)
+library(dplyr)
+library(tidyverse)
+
+lake_ice
+```
+
+###Filter the data to save only Lake Mendota
+```{r}
+lake_mendota <- filter(lake_ice, lakename == "LAKE MENDOTA")
+lake_mendota
+```
+
+#Select the columns
+```{r}
+select(lake_mendota, iceon_year, iceon_month, iceon_day, iceoff_year, iceoff_month, iceoff_day)
+```
+```{r}
+lake_mendota_1 <- lake_mendota %>% 
+  select(iceon_year, iceon_month, iceon_day, iceoff_year, iceoff_month, iceoff_day) %>% 
+  mutate(ice_on = make_date(iceon_year, iceon_month, iceon_day),
+         ice_off = make_date(iceoff_year, iceoff_month, iceoff_day))
+lake_mendota_1
+```
+
+#Create a new duration column by subtracting ice
+```{r}
+lake_mendota_2 <- lake_mendota1 %>% 
+  mutate(duration = as.numeric(ice_off - ice_on))
+lake_mendota_2
+```
+
+#Line Graph
+```{r}
+ggplot(data = lake_mendota_2) +
+  geom_line(mapping = aes(x = iceoff_year, y = duration), na.rm = TRUE)+
+  coord_cartesian(xlim = c(1850, 2030))
+```
+
+#Soil Carbon Dioxide
+
+```{r}
+soil_carbon <- read.delim("~/bi485/beardslee_jordan/data/soil_co2.txt")
+soil_carbon
+```
+
+#Establish date variable
+```{r}
+jan <- make_date(year = 2006, day = 1, month = 1)
+```
+
+#Rename the columns
+```{r}
+soil_levels <- soil_carbon %>%
+  rename(Days = DayN..) %>% 
+  rename(Dateco = Datecode..) %>% 
+  rename(Min = Min..) %>% 
+  rename(Veg = Veg..) %>% 
+  rename(Plot = Plot..) %>% 
+  rename(Group = Group..) %>% 
+  rename(Concentration = CorrCO2..) %>% 
+  rename(Stype = SoilT..)
+```
+
+#Date column
+```{r}
+soil_date <- soil_levels %>%
+   mutate(Date = jan + Days,
+         Year = year(Date),
+         Month = month(Date, label = TRUE, abbr = TRUE)) %>% 
+  group_by(Year, Month)
+
+soil_date
+```
+
+#Summarize
+```{r}
+soil_sum <- soil_date %>%
+  summarise(
+    meanCO2 = mean(Concentration),
+    Co2se = sd(Concentration)/sqrt(NROW(soil_date))
+  )
+soil_sum
+```
+
+#Column chart
+```{r}
+ggplot(data = soil_sum) +
+  geom_col(aes(x = Month, y = meanCO2)) +
+  geom_linerange(aes(x = Month, ymin = meanCO2 - Co2se, ymax = meanCO2 + Co2se)) +
+  facet_wrap(~Year, nrow = 2)
+```
+
+#Column with points
+```{r}
+ggplot(data = soil_sum) +
+  geom_point(aes(x = Month, y = meanCO2)) +
+  geom_linerange(aes(x = Month, ymin = meanCO2 - Co2se, ymax = meanCO2 + Co2se)) +
+  facet_wrap(~Year, nrow = 2)
+
+```
+
+#Mississippi River Discharge
+
+```{r}
+thebes <- read_csv("~/bi485/beardslee_jordan/data/thebes_discharge.csv")
+
+thebes
+
+colnames(thebes)
+thebes_col <- thebes %>%
+  gather ("1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003","2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", key = "Year", value = "discharge") %>% 
+  group_by(Year, Month) %>% 
+  mutate(discharge = discharge / 1000,
+         Event = case_when(
+           Year== "1993" ~ "Flood",
+           Year == "2011" ~ "Flood",
+           Year == "1988" ~ "Drought",
+           Year == "2012" ~ "Drought",
+           TRUE ~ "Normal"),
+         average_discharge = mean(discharge), na.rm = FALSE)
+thebes_col
+```
+
+
+#Plot 2
+```{r}
+events <- thebes_col %>%
+  filter(Event %in% c("Flood", "Drought"))
+events
+```
+
+#Plot the data
+```{r}
+plot_1 <- thebes_col %>%
+  filter(!Year %in% c("1988", "1993", "2011", "2012")) %>%
+  ggplot() +
+  geom_line(aes(x = Month, y = average_discharge, group = Year),
+            color = "gray70",
+            size = 0.3) +
+  labs(x = NULL,
+       y = "Discharge (cf/s, thousands)")
+plot_1
+```
+# Add second layer
+```{r}
+thebes_col %>%
+  filter(!Year %in% c("1988", "1993", "2011", "2012")) %>%
+  ggplot() +
+  geom_line(aes(x = Month, y = average_discharge, group = Year),
+            color = "gray70",
+            size = 0.3) +
+  labs(x = NULL,
+       y = "Discharge (cf/s, thousands)") +
+  geom_line(data = events, aes(x = Month, y = average_discharge, group = Year, color = Event))
+```
+
 
