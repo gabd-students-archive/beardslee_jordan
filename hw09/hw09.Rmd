@@ -27,11 +27,11 @@ x
 ```{r}
 writeLines(x)
 ```
-#2.1
+#14.2.1
 ```{r}
 str_length(c("a", "R for data science", NA))
 ```
-#2.2
+#14.2.2
 ```{r}
 str_c("x", "y")
 
@@ -370,5 +370,42 @@ promoter <- str_subset(caat_seqs_all, tata_box)
 promoter
 
 str_length(promoter)
+```
+
+#Part 2 ants
+
+```{r}
+ant <- read.csv("~/bi485/beardslee_jordan/data/ants.csv")
+ant
+```
+
+#Wrangle the data
+```{r}
+ant_data <- ant %>%
+  select(-c(season, seas.code, trt, plot, sample)) %>%
+  gather(key = species, value = abundance, matches("\\w\\.\\w", ignore.case = FALSE))
+ant_data
+```
+
+```{r}
+ants_data <- ant_data %>%
+    mutate(
+    species = str_replace(
+      species,
+      pattern = "(^[A-Z]*\\w{3})\\w{3,}\\.(\\w{4})\\w{2,}",
+      replacement = "\\1\\2"), year = factor(year, levels = c("2010", "2011"), labels = c("2010", "2011"), ordered = TRUE)) %>% 
+  group_by(year, species) %>% 
+  summarise(total = sum(abundance, na.rm = TRUE))
+ants_data
+```
+
+#Plot the data
+```{r}
+ggplot(data = ants_data, aes(x = reorder(species, total), y = total, group = species)) +
+       geom_line(color = "gray") +
+         geom_point( aes(shape = year), size = 2) +
+         coord_flip() +
+         labs(y = "Total Abundance", x = NULL, shape = "Year") +
+         theme_minimal()
 ```
 
