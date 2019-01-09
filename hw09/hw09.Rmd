@@ -409,3 +409,50 @@ ggplot(data = ants_data, aes(x = reorder(species, total), y = total, group = spe
          theme_minimal()
 ```
 
+#Part 3
+```{r}
+flowers <- read.csv("~/bi485/beardslee_jordan/data/flower_size.csv")
+flowers
+```
+```{r}
+flower_sizes <- flowers %>%
+  filter(!is.na(Flower.number)) %>%
+  select(species = Species, cor_length = Corolla.length..cm., throat_width = Corolla.width.throat..cm.) %>%
+  separate(species, into = c("genus", "species")) %>%
+  group_by(genus, species)
+flower_sizes
+```
+#Import and wrangle
+```{r}
+pollinators_raw <- read.csv("~/bi485/beardslee_jordan/data/flower_pollinators.csv", na.strings = c("", "NA"))
+
+pollinators_raw
+
+```
+
+```{r}
+pollinators <- pollinators_raw %>% 
+  select(-c(Color, starts_with("Source"))) %>% 
+  filter(!is.na(Pollinator)) %>%
+  separate(ï..Species, into = c("genus", "species")) 
+pollinators
+
+```
+
+```{r}
+pollinators <- pollinators %>% 
+    separate(Pollinator, into = "Syndrome", sep = " |, ")
+pollinators
+```
+#Join the datasets
+```{r}
+phlox <- inner_join(flower_sizes, pollinators, by = c("genus", "species"))
+phlox
+```
+#Plotting
+```{r}
+ggplot(data = phlox) 
+  geom_point(mapping = aes(x = mean_length, y = mean_width, color = Syndrome))
+```
+
+
